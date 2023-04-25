@@ -1,10 +1,16 @@
+import { NavDropdown } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+
 export default function Navbar() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
+    <nav
+      className="navbar navbar-expand-lg navbar-dark bg-dark "
+      style={{ height: 80 }}
+    >
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
+        <NavLink className="navbar-brand" to="/">
           Admin Module
-        </a>
+        </NavLink>
         <button
           className="navbar-toggler"
           type="button"
@@ -16,16 +22,25 @@ export default function Navbar() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div
+          className="collapse navbar-collapse"
+          id="navbarNavAltMarkup"
+          style={{ marginLeft: 30 }}
+        >
           <div className="navbar-nav">
-            <a className="nav-link" aria-current="page" href="#">
-              Home
-            </a>
-            <a className="nav-link" href="#">
-              Users
-            </a>
+            <NavLink className="nav-link" to="/" aria-current="page">
+              Inicio
+            </NavLink>
+            <NavLink className="nav-link" to="/users">
+              Usuarios
+            </NavLink>
           </div>
         </div>
+        <nav className="text-light">
+          <NavLink className="nav-link" to="/users">
+            Cerrar Session
+          </NavLink>
+        </nav>
       </div>
     </nav>
   );
