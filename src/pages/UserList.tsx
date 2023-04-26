@@ -14,6 +14,7 @@ export default function UserList() {
   const [show, setShow] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const logged = useAppSelector(selectUser);
+  const [searchUser, setSearchUser] = useState<String | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -52,6 +53,17 @@ export default function UserList() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const filteredUsers = users.filter((user) => {
+    if (searchUser === null) {
+      return user;
+    } else if (
+      user.name.toLowerCase().includes(searchUser.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchUser.toLowerCase())
+    ) {
+      return user;
+    }
+  });
+
   if (loading) return <Loader />;
 
   return (
@@ -63,6 +75,12 @@ export default function UserList() {
             <button className="btn btn-primary py-2">Agregar Usuario</button>
           </Link>
         )}
+        <input
+          type="text"
+          className="form-control mx-2"
+          placeholder="Buscar usuario por nombre o correo"
+          onChange={(e) => setSearchUser(e.target.value)}
+        />
       </div>
       <table className="table table-striped p-50">
         <thead>
@@ -78,7 +96,7 @@ export default function UserList() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <tr key={user.id}>
               <th scope="row">{user.name}</th>
               <td>{user.email}</td>
