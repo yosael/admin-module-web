@@ -5,12 +5,15 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { useAppSelector } from "../hooks/storeHooks";
+import { selectUser } from "../store/userSlice";
 
 export default function UserList() {
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const logged = useAppSelector(selectUser);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -55,9 +58,11 @@ export default function UserList() {
     <div className="container">
       <h1 className="py-4">UserList</h1>
       <div className="d-flex ">
-        <Link to={"/user"}>
-          <button className="btn btn-primary py-2">Agregar Usuario</button>
-        </Link>
+        {logged?.roleId === "admin" && (
+          <Link to={"/user"}>
+            <button className="btn btn-primary py-2">Agregar Usuario</button>
+          </Link>
+        )}
       </div>
       <table className="table table-striped p-50">
         <thead>
@@ -65,9 +70,11 @@ export default function UserList() {
             <th scope="col">Nombre</th>
             <th scope="col">Correo</th>
             <th scope="col">Rol</th>
-            <th scope="col" colSpan={2}>
-              Acciones
-            </th>
+            {logged?.roleId === "admin" && (
+              <th scope="col" colSpan={2}>
+                Acciones
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -76,20 +83,24 @@ export default function UserList() {
               <th scope="row">{user.name}</th>
               <td>{user.email}</td>
               <td>{user.role.name}</td>
-              <td>
-                <Link to={`/user/${user.id}`} className="btn btn-primary">
-                  Editar
-                </Link>
-              </td>
-              <td>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => deleteModal(user.id)}
-                  disabled={loading}
-                >
-                  Eliminar
-                </button>
-              </td>
+              {logged?.roleId === "admin" && (
+                <>
+                  <td>
+                    <Link to={`/user/${user.id}`} className="btn btn-primary">
+                      Editar
+                    </Link>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => deleteModal(user.id)}
+                      disabled={loading}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </>
+              )}
             </tr>
           ))}
         </tbody>

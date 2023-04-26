@@ -1,4 +1,4 @@
-import { UserRequest, UserResponse } from "../types/User";
+import { UserLogged, UserRequest, UserResponse } from "../types/User";
 
 export default class UserService {
   public static async getUserInfo(): Promise<UserResponse> {
@@ -9,6 +9,7 @@ export default class UserService {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
         }
       );
@@ -27,6 +28,7 @@ export default class UserService {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
           body: JSON.stringify(userData),
         }
@@ -49,6 +51,7 @@ export default class UserService {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
           body: JSON.stringify(userData),
         }
@@ -68,6 +71,7 @@ export default class UserService {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
         }
       );
@@ -84,6 +88,7 @@ export default class UserService {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
     } catch (error) {
@@ -99,6 +104,7 @@ export default class UserService {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
         }
       );
@@ -107,6 +113,29 @@ export default class UserService {
       return data;
     } catch (error) {
       console.log("error: ", error);
+      throw error;
+    }
+  }
+
+  public static async login(email: string, password: string) {
+    try {
+      const result = await fetch(
+        `${import.meta.env.VITE_APP_API_URL}/auth/login`,
+        {
+          method: "POST",
+          body: JSON.stringify({ email, password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (result.status !== 200) throw new Error("Invalid credentials");
+
+      if (!result.ok) throw new Error("Invalid credentials");
+
+      const data = (await result.json()) as UserLogged;
+      return data;
+    } catch (error) {
       throw error;
     }
   }

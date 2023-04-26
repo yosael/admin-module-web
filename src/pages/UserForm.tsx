@@ -4,6 +4,8 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import UserService from "../service/UserService";
 import { Form } from "react-bootstrap";
 import Loader from "../components/Loader";
+import { useAppSelector } from "../hooks/storeHooks";
+import { selectUser } from "../store/userSlice";
 
 export default function UserForm() {
   const [user, setUser] = useState<UserResponse | null>(null);
@@ -12,6 +14,7 @@ export default function UserForm() {
   const [password, setPassword] = useState("");
   const params = useParams();
   const navigate = useNavigate();
+  const logged = useAppSelector(selectUser);
 
   useEffect(() => {
     const getUser = async (userId: string) => {
@@ -150,9 +153,11 @@ export default function UserForm() {
               Lista de Usuarios
             </button>
           </Link>
-          <button type="submit" className="btn btn-primary">
-            Guardar
-          </button>
+          {logged?.roleId === "admin" && (
+            <button type="submit" className="btn btn-primary">
+              Guardar
+            </button>
+          )}
         </div>
       </Form>
     </div>

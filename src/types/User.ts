@@ -16,3 +16,11 @@ export type UserResponse = {
   email: string;
   role: Role;
 };
+
+export type UserLogged = {
+  token: string;
+  refreshToken: string;
+  name: string;
+  email: string;
+  roleId: string;
+};

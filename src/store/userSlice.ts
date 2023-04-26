@@ -2,24 +2,16 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./storeConfig";
 
 interface User {
-  id: string;
   name: string;
   email: string;
-  role: {
-    id: string;
-    name: string;
-  };
+  roleId: string;
   isAuth: boolean;
 }
 
 const initialState: User = {
-  id: "",
   name: "",
   email: "",
-  role: {
-    id: "",
-    name: "",
-  },
+  roleId: "",
   isAuth: false,
 };
 
@@ -28,21 +20,16 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     loginStore: (state, action: PayloadAction<User>) => {
-      const { id, name, email, role } = action.payload;
-      state.id = id;
+      const { name, email, roleId } = action.payload;
       state.name = name;
-      state.role = role;
+      state.roleId = roleId;
       state.email = email;
       state.isAuth = true;
-      console.log("loginStore", state);
     },
     logoutStore: (state) => {
-      state.id = "";
       state.name = "";
-      state.role = {
-        id: "",
-        name: "",
-      };
+      state.roleId = "";
+      state.email = "";
       state.isAuth = false;
     },
   },

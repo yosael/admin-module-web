@@ -1,7 +1,21 @@
-import { NavDropdown } from "react-bootstrap";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../hooks/storeHooks";
+import { logoutStore } from "../store/userSlice";
 
 export default function Navbar() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      dispatch(logoutStore());
+      localStorage.removeItem("token");
+      navigate("/login");
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return (
     <nav
       className="navbar navbar-expand-lg navbar-dark bg-dark "
@@ -37,9 +51,9 @@ export default function Navbar() {
           </div>
         </div>
         <nav className="text-light">
-          <NavLink className="nav-link" to="/users">
+          <button className="nav-link btn" onClick={logout}>
             Cerrar Session
-          </NavLink>
+          </button>
         </nav>
       </div>
     </nav>
