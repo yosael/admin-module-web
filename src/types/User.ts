@@ -1,12 +1,12 @@
 export type UserRequest = {
   name: string;
   email: string;
-  password: string;
-  roleId: number;
+  password?: string;
+  roleId: string;
 };
 
 export type Role = {
-  id: number;
+  id: string;
   name: string;
 };
 

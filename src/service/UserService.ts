@@ -38,10 +38,13 @@ export default class UserService {
     }
   }
 
-  public static async updateUser(userData: UserRequest): Promise<UserResponse> {
+  public static async updateUser(
+    userId: number,
+    userData: UserRequest
+  ): Promise<UserResponse> {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_APP_API_URL}/users`,
+        `${import.meta.env.VITE_APP_API_URL}/users/${userId}`,
         {
           method: "PUT",
           headers: {

@@ -1,24 +1,113 @@
+import Loader from "../components/Loader";
 import UserService from "../service/UserService";
 import { UserResponse } from "../types/User";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 export default function UserList() {
   const [users, setUsers] = useState<UserResponse[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setLoading(true);
         const response = await UserService.getAllUsers();
         setUsers(response);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUsers();
   }, []);
 
+  const onDelete = async () => {
+    try {
+      setLoading(true);
+      await UserService.deleteUser(deleteId as number);
+      setUsers(users.filter((user) => user.id !== (deleteId as number)));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      handleClose();
+      setDeleteId(null);
+    }
+  };
+
+  const deleteModal = (id: number) => {
+    setDeleteId(id);
+    handleShow();
+  };
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  if (loading) return <Loader />;
+
   return (
-    <div>
-      <h1>UserList</h1>
-      {JSON.stringify(users)}
+    <div className="container">
+      <h1 className="py-4">UserList</h1>
+      <div className="d-flex ">
+        <Link to={"/user"}>
+          <button className="btn btn-primary py-2">Agregar Usuario</button>
+        </Link>
+      </div>
+      <table className="table table-striped p-50">
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Rol</th>
+            <th scope="col" colSpan={2}>
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <th scope="row">{user.name}</th>
+              <td>{user.email}</td>
+              <td>{user.role.name}</td>
+              <td>
+                <Link to={`/user/${user.id}`} className="btn btn-primary">
+                  Editar
+                </Link>
+              </td>
+              <td>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => deleteModal(user.id)}
+                  disabled={loading}
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Eliminar Usuario</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Quieres Borrar el usuario?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={onDelete}>
+            Borrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
